@@ -19,6 +19,7 @@ add_subdirectory(common)
 # Add all subprojects
 add_subdirectory(MSVC_SP_4)
 add_subdirectory(MSVC_SP_5)
+add_subdirectory(MSVC_CH_5)
 add_subdirectory(MSVC_RH_4)
 add_subdirectory(MSVC_RH_5)
 

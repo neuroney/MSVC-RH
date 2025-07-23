@@ -8,7 +8,7 @@ This codebase is part of the MSVC-RH paper.
 
 ## Setup and Building Instructions
 
-First, install the library [NTL](https://libntl.org/doc/tour-unix.html) required by PODT. On several Ubuntu systems this can be done directly through the link above.
+First, install the library [NTL](https://libntl.org/doc/tour-unix.html) required by MSVC-RH. On several Ubuntu systems this can be done directly through the link above.
 
 To build library and executables:
 ```shell
