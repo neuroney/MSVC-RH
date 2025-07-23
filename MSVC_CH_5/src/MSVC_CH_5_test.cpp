@@ -149,8 +149,8 @@ void MSVC_CH_5_TEST(int d, int m, int t, int secpar) {
     std::cout << "Computing individual proofs pi[i]:" << std::endl;
     for (int i = 0; i < env.k; ++i) {
         Vec<Fq> sigma_i;
-        sigma_i.SetLength(env.m + 1);
-        for (int j = 0; j < env.m + 1; ++j) {
+        sigma_i.SetLength(env.m + 3);
+        for (int j = 0; j < env.m + 3; ++j) {
             sigma_i[j] = sigma[i][j];
         }
         

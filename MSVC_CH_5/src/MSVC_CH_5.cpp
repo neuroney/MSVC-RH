@@ -53,7 +53,14 @@ void ProbGen(VK_X &vk, Mat<Fq> &sigma, const Env &env, const PK_F &pk, const Vec
     ZZ_pX b;
     random(b, env.t + 1);
     SetCoeff(b, 0, alpha);
-    sigma.SetDims(env.k, env.m + 1);
+    sigma.SetDims(env.k, env.m + 3);
+
+        // Context hiding, generating 0's shares
+    ZZ_pX a_poly, e_poly;
+    random(a_poly, env.k);
+    random(e_poly, env.k);
+    SetCoeff(a_poly, 0, 0); // Set constant term to 0
+    SetCoeff(e_poly, 0, 0); // Set constant term to 0
 
     ZZ_p tmp;
     for (int i = 0; i < env.k; ++i)
@@ -64,6 +71,8 @@ void ProbGen(VK_X &vk, Mat<Fq> &sigma, const Env &env, const PK_F &pk, const Vec
             eval(sigma[i][j], c[j], tmp);
         }
         eval(sigma[i][env.m], b, tmp);
+        eval(sigma[i][env.m + 1], a_poly, tmp);
+        eval(sigma[i][env.m + 2], e_poly, tmp);
     }
 
     PowerMod(vk, env.g, rep(alpha), env.fq);
@@ -74,7 +83,7 @@ void Compute(Vec<Fq> &pi_i, int idx, const MultiPoly<Fq> &ek_i, const Vec<Fq> &s
     if (idx < 0 || idx >= env.k)
         throw std::out_of_range("Index out of range in Compute");
 
-    if (ek_i.varCount() != sigma_i.length() - 1)
+    if (ek_i.varCount() != sigma_i.length() - 3)
         throw std::invalid_argument("Length of sigma_i must match number of variables in ek_i");
 
     // pi_i.kill();
@@ -86,8 +95,8 @@ void Compute(Vec<Fq> &pi_i, int idx, const MultiPoly<Fq> &ek_i, const Vec<Fq> &s
         eval_points[i] = sigma_i[i];
     }
 
-    pi_i[0] = ek_i.evaluate(eval_points);
-    pi_i[1] = pi_i[0] * sigma_i[env.m];
+    pi_i[0] = ek_i.evaluate(eval_points) + sigma_i[env.m + 1];
+    pi_i[1] = pi_i[0] * sigma_i[env.m] + sigma_i[env.m + 2];
 }
 
 bool Verify(Fq &res, const VK_F &vk_f, const VK_X &vk_x, Mat<Fq> pi, const Env &env)

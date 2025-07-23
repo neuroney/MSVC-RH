@@ -96,8 +96,8 @@ SimpleTimingResult runSingleTest(int d, int m, int t, int secpar) {
         double max_compute_time = 0.0;
         for (int i = 0; i < env.k; ++i) {
             Vec<Fq> sigma_i;
-            sigma_i.SetLength(env.m + 1);
-            for (int j = 0; j < env.m + 1; ++j) {
+            sigma_i.SetLength(env.m + 3);
+            for (int j = 0; j < env.m + 3; ++j) {
                 sigma_i[j] = sigma[i][j];
             }
             
