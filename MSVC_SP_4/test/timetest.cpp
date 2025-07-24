@@ -6,6 +6,6 @@ int main()
     int t = 1;            // Number of variables
     int secpar = 128;     // Security parameter
     int iterations = 100; // Number of test iterations
-    SP4::MSVC_SP_4_TIMETEST(t, m, d, secpar, iterations);
+    SP4::MSVC_SP_4_TIMETEST(d, m, t, secpar, iterations);
     return 0;
 }

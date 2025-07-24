@@ -4,6 +4,6 @@ int main() {
     size_t m = 100;    // Number of variables
     int t = 1;        // Number of variables
     int secpar = 128; // Security parameter
-    SP4::MSVC_SP_4_TEST(t, m, d, secpar);
+    SP4::MSVC_SP_4_TEST(d, m, t, secpar);
     return 0;
 }

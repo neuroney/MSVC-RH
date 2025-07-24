@@ -30,14 +30,14 @@ struct TestResult {
 
 
 
-    TestResult RH_4_TIMETEST(int t, int m, int d, int secpar, int iterations, bool silent = true);
+    TestResult RH_4_TIMETEST(int d, int m, int t, int secpar, int iterations, bool silent = true);
 
 
 
     TestResult RH_5_TIMETEST(int d, int m, int t, int secpar, int iterations, bool silent = true);
 
 
-    TestResult SP_4_TIMETEST(int t, int m, int d, int secpar, int iterations, bool silent = true);
+    TestResult SP_4_TIMETEST(int d, int m, int t, int secpar, int iterations, bool silent = true);
 
 
 
