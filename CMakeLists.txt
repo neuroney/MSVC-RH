@@ -23,3 +23,6 @@ add_subdirectory(MSVC_CH_5)
 add_subdirectory(MSVC_RH_4)
 add_subdirectory(MSVC_RH_5)
 
+# Add unified test runner
+add_subdirectory(unified_test)
+

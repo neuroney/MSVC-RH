@@ -1,10 +1,12 @@
 #include "MSVC_SP_4.h"
+namespace SP4{
 
 void Initialize(Env &env, int t, int secpar)
 {
     env.secpar = secpar;
     env.t = t;
-    GenGermainPrime(env.ord, env.secpar);
+    //GenGermainPrime(env.ord, env.secpar);
+    conv<ZZ>(env.ord, "241231170316424564953358597862841670333");
     env.fq = 2 * env.ord + 1;
     ZZ_p::init(env.ord);
     env.g = FindGen(env.ord, env.fq, 10000);
@@ -151,7 +153,6 @@ void Compute(Fq &pi_i, int idx, const MultiPoly<Fq> &ek_i, const Vec<Fq> &sigma_
     }
 
     pi_i = ek_i.evaluate(eval_points);
-    cout << "Computed value for index " << idx << ": " << pi_i << endl;
 }
 
 bool Verify(Fq &res, const VK_F &vk_f, const VK_X &vk_x, Vec<Fq> pi, const Env &env)
@@ -178,6 +179,6 @@ bool Verify(Fq &res, const VK_F &vk_f, const VK_X &vk_x, Vec<Fq> pi, const Env &
         return false;
     }
     eval(res, phi, ZZ_p(0));
-    cout << "Verification successful: " << res << endl;
+    //cout << "Verification successful." << endl;
     return true;
-}
+}}

@@ -1,6 +1,7 @@
 #pragma once
 #include "helper.h"
 #include "MultiPoly.h"
+namespace RH5 {
 
 struct Env {
     ZZ fq;
@@ -32,4 +33,4 @@ void Compute(Vec<Fq> & pi_i, int idx, const MultiPoly<Fq> &ek_i, const Vec<Fq> &
 
 bool Verify(const VK_F &vk_f, const VK_X & vk_x, const Mat<Fq> &pi, const Env &env);
 
-void Reconstruct(Fq & res, const SK_theta &sk, const Mat<Fq> &pi, const Env &env);
+void Reconstruct(Fq & res, const SK_theta &sk, const Mat<Fq> &pi, const Env &env);}

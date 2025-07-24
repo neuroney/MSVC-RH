@@ -1,10 +1,12 @@
 #include "MSVC_RH_4.h"
+namespace RH4 {
 
 void Initialize(Env &env, int t, int secpar)
 {
     env.secpar = secpar;
     env.t = t;
-    GenGermainPrime(env.ord, env.secpar);
+    //GenGermainPrime(env.ord, env.secpar);
+    conv<ZZ>(env.ord, "241231170316424564953358597862841670333");
     env.fq = 2 * env.ord + 1;
     ZZ_p::init(env.ord);
     env.g = FindGen(env.ord, env.fq, 10000);
@@ -162,7 +164,6 @@ void Compute(Fq &pi_i, int idx, const MultiPoly<Fq> &ek_i, const Vec<Fq> &sigma_
     }
 
     pi_i = ek_i.evaluate(eval_points) + sigma_i[env.m] + theta_i;
-    cout << "Computed value for index " << idx << ": " << pi_i << endl;
 }
 
 bool Verify(const VK_F &vk_f, const VK_theta &vk_theta, Vec<Fq> pi, const Env &env)
@@ -190,7 +191,7 @@ bool Verify(const VK_F &vk_f, const VK_theta &vk_theta, Vec<Fq> pi, const Env &e
         std::cerr << "Verification failed: vk_f.f evaluated at vk_x.a does not match vk_x.alpha" << std::endl;
         return false;
     }
-    cout << "Verification successful." << endl;
+    //cout << "Verification successful." << endl;
     return true;
 }
 
@@ -229,4 +230,5 @@ void Reconstruct(Fq &res, const SK_theta &sk, const Vec<Fq> &pi, const Env &env)
     ZZ_pX phi = interpolate(k_vec, pi);
     eval(res, phi, ZZ_p(0));
     res -= sk;
+}
 }

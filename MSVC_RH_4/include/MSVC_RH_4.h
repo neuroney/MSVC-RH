@@ -1,6 +1,7 @@
 #pragma once
 #include "helper.h"
 #include "MultiPoly.h"
+namespace RH4 {
 
 struct Env {
     ZZ fq;
@@ -46,3 +47,4 @@ bool Verify(const VK_F &vk_f, const VK_theta & vk_theta, Vec<Fq> pi, const Env &
 void MaskGen(VK_theta &vk, SK_theta &sk, Vec<Fq> &theta, const Env& env, const VK_X &vk_x);
 
 void Reconstruct(Fq & res, const SK_theta &sk, const Vec<Fq> &pi, const Env &env);
+}

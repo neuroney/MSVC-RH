@@ -1,10 +1,12 @@
 #include "MSVC_RH_5.h"
 
+namespace RH5 {
 void Initialize(Env &env, int t, int secpar)
 {
     env.secpar = secpar;
     env.t = t;
-    GenGermainPrime(env.ord, env.secpar);
+        //GenGermainPrime(env.ord, env.secpar);
+    conv<ZZ>(env.ord, "241231170316424564953358597862841670333");
     env.fq = 2 * env.ord + 1;
     ZZ_p::init(env.ord);
     env.g = FindGen(env.ord, env.fq, 10000);
@@ -12,6 +14,7 @@ void Initialize(Env &env, int t, int secpar)
 
 void KeyGen(PK_F &pk, VK_F &vk, EK_F &ek, Env &env, const MultiPoly<Fq> &F)
 {
+    double tt = GetTime();
     if (F.varCount() == 0 || F.maxDegree() < 0)
         throw std::invalid_argument("Invalid polynomial F");
 
@@ -21,7 +24,6 @@ void KeyGen(PK_F &pk, VK_F &vk, EK_F &ek, Env &env, const MultiPoly<Fq> &F)
 
     pk = 0;
     vk = 0;
-
     ek.SetLength(env.k);
     for (int i = 0; i < env.k; ++i)
     {
@@ -125,7 +127,7 @@ bool Verify(const VK_F &vk_f, const VK_X &vk_x, const Mat<Fq> &pi, const Env &en
         std::cerr << "Verification failed: vk_x.a does not match vk_x.alpha" << std::endl;
         return false;
     }
-    cout << "Verification successful" << endl;
+    //cout << "Verification successful" << endl;
     return true;
 }
 
@@ -159,4 +161,5 @@ void Reconstruct(Fq & res, const SK_theta &sk, const Mat<Fq> &pi, const Env &env
 
     ZZ_pX phi = interpolate(k_vec, pi0_vec);
     res = phi[0] - sk;
+}
 }

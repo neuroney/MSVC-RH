@@ -1,28 +1,9 @@
-#include "MSVC_RH_5.h"
+#include "MSVC_RH_5_timetest.h"
 #include <chrono>
 #include <iostream>
 #include <iomanip>
 #include <vector>
-
-// Simple timer class
-class SimpleTimer
-{
-private:
-    std::chrono::high_resolution_clock::time_point start_time;
-
-public:
-    void start()
-    {
-        start_time = std::chrono::high_resolution_clock::now();
-    }
-
-    double elapsed_ms()
-    {
-        auto end_time = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
-        return duration.count() / 1000.0; // Convert to milliseconds
-    }
-};
+namespace RH5 {
 
 // Generate simple random input
 Vec<Fq> generateSimpleInput(int size)
@@ -35,21 +16,6 @@ Vec<Fq> generateSimpleInput(int size)
     }
     return X;
 }
-
-// Run a single test and return timing results
-struct SimpleTimingResult
-{
-    double initialize_time;
-    double keygen_time;
-    double probgen_time;
-    double maskgen_time;
-    double compute_time;
-    double verify_time;
-    double reconstruct_time;
-    double direct_compute_time;
-    double total_time;
-    bool success;
-};
 
 SimpleTimingResult runSingleTest(int d, int m, int t, int secpar)
 {
@@ -134,7 +100,7 @@ SimpleTimingResult runSingleTest(int d, int m, int t, int secpar)
         result.direct_compute_time = timer.elapsed_ms();
 
         result.total_time = result.initialize_time + result.keygen_time +
-                            result.probgen_time + result.maskgen_time + result.compute_time + 
+                            result.probgen_time + result.maskgen_time + result.compute_time +
                             result.verify_time + result.reconstruct_time;
 
         if (!verified)
@@ -159,128 +125,105 @@ SimpleTimingResult runSingleTest(int d, int m, int t, int secpar)
 }
 
 // Main timing test function
-void MSVC_RH_5_TIMETEST(int d, int m, int t, int secpar, int iterations = 10)
+TestResultData MSVC_RH_5_TIMETEST(int d, int m, int t, int secpar, int iterations, bool silent)
 {
-    std::cout << "=========================================" << std::endl;
-    std::cout << "    MSVC_RH_5 Simple Timing Test        " << std::endl;
-    std::cout << "=========================================" << std::endl;
-    std::cout << std::endl;
+    if (!silent)
+    {
+        std::cout << "=========================================" << std::endl;
+        std::cout << "    MSVC_RH_5 Simple Timing Test        " << std::endl;
+        std::cout << "=========================================" << std::endl;
+        std::cout << std::endl;
 
-    // Test configuration
-    std::cout << "Configuration:" << std::endl;
-    std::cout << "  Privacy (t): " << t << std::endl;
-    std::cout << "  Fq size (secpar): " << secpar << std::endl;
-    std::cout << "  Polynomial degree (d): " << d << std::endl;
-    std::cout << "  Number of variables (m): " << m << std::endl;
-    std::cout << "  Iterations: " << iterations << std::endl;
-    std::cout << std::endl;
-
+        // Test configuration
+        std::cout << "Configuration:" << std::endl;
+        std::cout << "  Privacy (t): " << t << std::endl;
+        std::cout << "  Fq size (secpar): " << secpar << std::endl;
+        std::cout << "  Polynomial degree (d): " << d << std::endl;
+        std::cout << "  Number of variables (m): " << m << std::endl;
+        std::cout << "  Iterations: " << iterations << std::endl;
+        std::cout << std::endl;
+    }
     // Storage for results
     std::vector<SimpleTimingResult> results;
 
     // Run multiple tests
-    std::cout << "Running " << iterations << " iterations..." << std::endl;
+    if (!silent)
+    {
+        std::cout << "Running " << iterations << " iterations..." << std::endl;
+    }
     for (int i = 0; i < iterations; ++i)
     {
-        std::cout << "  Iteration " << (i + 1) << "/" << iterations << "...";
+        if (!silent)
+        {
+            std::cout << "  Iteration " << (i + 1) << "/" << iterations << "...";
+        }
 
         SimpleTimingResult result = runSingleTest(d, m, t, secpar);
 
         if (result.success)
         {
             results.push_back(result);
-            std::cout << " OK (" << std::fixed << std::setprecision(2)
-                      << result.total_time << " ms)" << std::endl;
+            if (!silent)
+            {
+                std::cout << " OK (" << std::fixed << std::setprecision(2)
+                          << result.total_time << " ms)" << std::endl;
+            }
         }
         else
         {
-            std::cout << " FAILED" << std::endl;
+            if (!silent)
+            {
+                std::cout << " FAILED" << std::endl;
+            }
         }
     }
 
-    if (results.empty())
-    {
-        std::cout << "No successful runs!" << std::endl;
-        return;
-    }
-
-    // Calculate averages
-    double avg_initialize = 0, avg_keygen = 0, avg_probgen = 0, avg_maskgen = 0, avg_compute = 0, avg_verify = 0, avg_reconstruct = 0, avg_direct_compute = 0, avg_total = 0;
-
-    for (const auto &r : results)
-    {
-        avg_initialize += r.initialize_time;
-        avg_keygen += r.keygen_time;
-        avg_probgen += r.probgen_time;
-        avg_maskgen += r.maskgen_time;
-        avg_compute += r.compute_time;
-        avg_verify += r.verify_time;
-        avg_reconstruct += r.reconstruct_time;
-        avg_direct_compute += r.direct_compute_time;
-        avg_total += r.total_time;
-    }
-
-    size_t count = results.size();
-    avg_initialize /= count;
-    avg_keygen /= count;
-    avg_probgen /= count;
-    avg_maskgen /= count;
-    avg_compute /= count;
-    avg_verify /= count;
-    avg_reconstruct /= count;
-    avg_direct_compute /= count;
-    avg_total /= count;
+    TestResultData testResult = calculateAverageWithoutExtremes(results);
 
     // Print results
-    std::cout << std::endl;
-    std::cout << "=========================================" << std::endl;
-    std::cout << "              RESULTS                   " << std::endl;
-    std::cout << "=========================================" << std::endl;
-    std::cout << "Successful runs: " << count << "/" << iterations << std::endl;
-    std::cout << std::endl;
+    if (!silent)
+    {
+        std::cout << std::endl;
+        std::cout << "=========================================" << std::endl;
+        std::cout << "              RESULTS                   " << std::endl;
+        std::cout << "=========================================" << std::endl;
+        std::cout << "Successful runs: " << testResult.successful_runs << "/" << iterations << std::endl;
+        std::cout << std::endl;
 
-    std::cout << std::fixed << std::setprecision(3);
-    std::cout << "Average Times (ms):" << std::endl;
-    std::cout << "  Initialize:      " << std::setw(10) << avg_initialize << std::endl;
-    std::cout << "  KeyGen:          " << std::setw(10) << avg_keygen << std::endl;
-    std::cout << "  ProbGen:         " << std::setw(10) << avg_probgen << std::endl;
-    std::cout << "  MaskGen:         " << std::setw(10) << avg_maskgen << std::endl;
-    std::cout << "  Compute:         " << std::setw(10) << avg_compute << std::endl;
-    std::cout << "  Verify:          " << std::setw(10) << avg_verify << std::endl;
-    std::cout << "  Reconstruct:     " << std::setw(10) << avg_reconstruct << std::endl;
-    std::cout << "  DirectCompute:   " << std::setw(10) << avg_direct_compute << std::endl;
-    std::cout << "  -----------" << std::endl;
-    std::cout << "  Total (Protocol):" << std::setw(10) << avg_total << std::endl;
-    std::cout << std::endl;
+        std::cout << std::fixed << std::setprecision(3);
+        std::cout << "Average Times (ms):" << std::endl;
+        std::cout << "  Initialize:      " << std::setw(10) << testResult.initialize_time << std::endl;
+        std::cout << "  KeyGen:          " << std::setw(10) << testResult.keygen_time << std::endl;
+        std::cout << "  ProbGen:         " << std::setw(10) << testResult.probgen_time << std::endl;
+        std::cout << "  MaskGen:         " << std::setw(10) << testResult.maskgen_time << std::endl;
+        std::cout << "  Compute:         " << std::setw(10) << testResult.compute_time << std::endl;
+        std::cout << "  Verify:          " << std::setw(10) << testResult.verify_time << std::endl;
+        std::cout << "  Reconstruct:     " << std::setw(10) << testResult.reconstruct_time << std::endl;
+        std::cout << "  DirectCompute:   " << std::setw(10) << testResult.direct_compute_time << std::endl;
+        std::cout << "  -----------" << std::endl;
+        std::cout << "  Total (Protocol):" << std::setw(10) << testResult.total_time << std::endl;
+        std::cout << std::endl;
 
-    // Show breakdown percentages
-    std::cout << "Time Breakdown (%):" << std::endl;
-    std::cout << "  Initialize:      " << std::setw(6) << std::setprecision(1) << (avg_initialize / avg_total) * 100 << "%" << std::endl;
-    std::cout << "  KeyGen:          " << std::setw(6) << std::setprecision(1) << (avg_keygen / avg_total) * 100 << "%" << std::endl;
-    std::cout << "  ProbGen:         " << std::setw(6) << std::setprecision(1) << (avg_probgen / avg_total) * 100 << "%" << std::endl;
-    std::cout << "  MaskGen:         " << std::setw(6) << std::setprecision(1) << (avg_maskgen / avg_total) * 100 << "%" << std::endl;
-    std::cout << "  Compute:         " << std::setw(6) << std::setprecision(1) << (avg_compute / avg_total) * 100 << "%" << std::endl;
-    std::cout << "  Verify:          " << std::setw(6) << std::setprecision(1) << (avg_verify / avg_total) * 100 << "%" << std::endl;
-    std::cout << "  Reconstruct:     " << std::setw(6) << std::setprecision(1) << (avg_reconstruct / avg_total) * 100 << "%" << std::endl;
-    std::cout << std::endl;
+        // Show breakdown percentages
+        std::cout << "Time Breakdown (%):" << std::endl;
+        std::cout << "  Initialize:      " << std::setw(6) << std::setprecision(1) << (testResult.initialize_time / testResult.total_time) * 100 << "%" << std::endl;
+        std::cout << "  KeyGen:          " << std::setw(6) << std::setprecision(1) << (testResult.keygen_time / testResult.total_time) * 100 << "%" << std::endl;
+        std::cout << "  ProbGen:         " << std::setw(6) << std::setprecision(1) << (testResult.probgen_time / testResult.total_time) * 100 << "%" << std::endl;
+        std::cout << "  MaskGen:         " << std::setw(6) << std::setprecision(1) << (testResult.maskgen_time / testResult.total_time) * 100 << "%" << std::endl;
+        std::cout << "  Compute:         " << std::setw(6) << std::setprecision(1) << (testResult.compute_time / testResult.total_time) * 100 << "%" << std::endl;
+        std::cout << "  Verify:          " << std::setw(6) << std::setprecision(1) << (testResult.verify_time / testResult.total_time) * 100 << "%" << std::endl;
+        std::cout << "  Reconstruct:     " << std::setw(6) << std::setprecision(1) << (testResult.reconstruct_time / testResult.total_time) * 100 << "%" << std::endl;
+        std::cout << std::endl;
 
-    // Show protocol vs direct computation comparison
-    std::cout << "Protocol vs Direct Computation:" << std::endl;
-    std::cout << "  Protocol Total:  " << std::setw(10) << std::setprecision(3) << avg_total << " ms" << std::endl;
-    std::cout << "  Direct Compute:  " << std::setw(10) << std::setprecision(3) << avg_direct_compute << " ms" << std::endl;
-    std::cout << "  Overhead Factor: " << std::setw(10) << std::setprecision(1) << (avg_total / avg_direct_compute) << "x" << std::endl;
-    std::cout << std::endl;
+        // Show protocol vs direct computation comparison
+        std::cout << "Protocol vs Direct Computation:" << std::endl;
+        std::cout << "  Protocol Total:  " << std::setw(10) << std::setprecision(3) << testResult.total_time << " ms" << std::endl;
+        std::cout << "  Direct Compute:  " << std::setw(10) << std::setprecision(3) << testResult.direct_compute_time << " ms" << std::endl;
+        std::cout << "  Overhead Factor: " << std::setw(10) << std::setprecision(1) << (testResult.total_time / testResult.direct_compute_time) << "x" << std::endl;
+        std::cout << std::endl;
 
-    std::cout << "Test completed successfully!" << std::endl;
+        std::cout << "Test completed successfully!" << std::endl;
+    }
+    return testResult;
 }
-
-int main()
-{
-    int d = 2;            // Polynomial degree
-    int m = 100;          // Number of variables
-    int t = 1;            // Number of variables
-    int secpar = 32;      // Security parameter
-    int iterations = 100; // Number of iterations for averaging
-    MSVC_RH_5_TIMETEST(d, m, t, secpar, iterations);
-    return 0;
 }

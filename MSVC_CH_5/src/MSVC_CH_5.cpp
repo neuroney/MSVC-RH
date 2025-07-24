@@ -1,10 +1,13 @@
 #include "MSVC_CH_5.h"
 
+namespace CH5 {
+
 void Initialize(Env &env, int t, int secpar)
 {
     env.secpar = secpar;
     env.t = t;
-    GenGermainPrime(env.ord, env.secpar);
+        //GenGermainPrime(env.ord, env.secpar);
+    conv<ZZ>(env.ord, "241231170316424564953358597862841670333");
     env.fq = 2 * env.ord + 1;
     ZZ_p::init(env.ord);
     env.g = FindGen(env.ord, env.fq, 10000);
@@ -125,6 +128,7 @@ bool Verify(Fq &res, const VK_F &vk_f, const VK_X &vk_x, Mat<Fq> pi, const Env &
         return false;
     }
     res = phi[0];
-    cout << "Verification successful: " << res << endl;
+    //cout << "Verification successful." << endl;
     return true;
+}
 }

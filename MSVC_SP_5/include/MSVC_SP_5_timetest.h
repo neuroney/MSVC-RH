@@ -4,32 +4,9 @@
 #include <iostream>
 #include <vector>
 #include <string>
-
-// Function to run simple timing tests for MSVC_SP_5
-void MSVC_SP_5_TIMETEST();
-
-// Simple timer utility class
-class SimpleTimer {
-private:
-    std::chrono::high_resolution_clock::time_point start_time;
-    
-public:
-    void start();
-    double elapsed_ms();
-};
-
-// Simple timing result structure
-struct SimpleTimingResult {
-    double initialize_time;
-    double keygen_time;
-    double probgen_time;
-    double compute_time;
-    double verify_time;
-    double direct_compute_time;
-    double total_time;
-    bool success;
-};
-
-// Utility functions
-Vec<Fq> generateSimpleInput(int size);
-SimpleTimingResult runSingleTest(int d, int m, int t, int secpar);
+namespace SP5
+{
+    // Function to run simple timing tests for MSVC_SP_5
+    TestResultData MSVC_SP_5_TIMETEST(int d, int m, int t, int secpar, int iterations = 10, bool silent = false);
+    SimpleTimingResult runSingleTest(int d, int m, int t, int secpar);
+}

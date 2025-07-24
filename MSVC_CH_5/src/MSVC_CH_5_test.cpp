@@ -1,61 +1,6 @@
 #include "MSVC_CH_5_test.h"
 
-// Print polynomials using MultiPoly's toString method
-void printMultiPoly(const MultiPoly<Fq>& poly, const std::string& name) {
-    std::cout << "=== " << name << " ===" << std::endl;
-    std::cout << "Degree: " << poly.maxDegree() << ", Variables: " << poly.varCount() << std::endl;
-    
-    std::vector<std::string> varNames;
-    for (size_t i = 0; i < poly.varCount(); ++i) {
-        varNames.push_back("x_" + std::to_string(i));
-    }
-    
-    std::cout << poly.toString(varNames) << std::endl << std::endl;
-}
-
-// Print ZZ_pX polynomials, referencing NTL format
-void printZZ_pX(const ZZ_pX& poly, const std::string& name) {
-    std::cout << "=== " << name << " ===" << std::endl;
-    std::cout << "Degree: " << deg(poly) << std::endl;
-    std::cout << "[";
-    for (int i = 0; i <= deg(poly); ++i) {
-        std::cout << coeff(poly, i);
-        if (i < deg(poly)) std::cout << " ";
-    }
-    std::cout << "]" << std::endl << std::endl;
-}
-
-// Helper function to print vectors
-template<typename T>
-void printVector(const Vec<T>& vec, const std::string& name) {
-    std::cout << "=== " << name << " ===" << std::endl;
-    std::cout << "Length: " << vec.length() << std::endl;
-    std::cout << "[";
-    for (int i = 0; i < vec.length(); ++i) {
-        std::cout << vec[i];
-        if (i < vec.length() - 1) std::cout << ", ";
-    }
-    std::cout << "]" << std::endl << std::endl;
-}
-
-// Helper function to print matrices
-template<typename T>
-void printMatrix(const Mat<T>& mat, const std::string& name) {
-    std::cout << "=== " << name << " ===" << std::endl;
-    std::cout << "Dimensions: " << mat.NumRows() << " x " << mat.NumCols() << std::endl;
-    std::cout << "[" << std::endl;
-    for (int i = 0; i < mat.NumRows(); ++i) {
-        std::cout << "  [";
-        for (int j = 0; j < mat.NumCols(); ++j) {
-            std::cout << mat[i][j];
-            if (j < mat.NumCols() - 1) std::cout << ", ";
-        }
-        std::cout << "]";
-        if (i < mat.NumRows() - 1) std::cout << ",";
-        std::cout << std::endl;
-    }
-    std::cout << "]" << std::endl << std::endl;
-}
+namespace CH5 {
 
 // Helper function to print environment parameters
 void printEnv(const Env& env) {
@@ -199,4 +144,5 @@ void MSVC_CH_5_TEST(int d, int m, int t, int secpar) {
     std::cout << "Result check: " << (direct_result == result ? "Matching" : "Different") << std::endl;
     
     return;
+}
 }
