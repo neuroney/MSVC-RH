@@ -61,6 +61,7 @@ In short, the tool allows you to compare all implemented MSVC schemes with consi
 ```shell
 cd build
 unified_test/unified_timetest -all
+```
 
 ## Project Structure
 
