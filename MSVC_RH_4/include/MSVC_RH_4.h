@@ -23,14 +23,14 @@ using EK_F = Vec<MultiPoly<Fq>>;
 struct VK_X {
     Vec<ZZ> a;
     Vec<ZZ> alpha; 
-    Fq a_bk;
-    Fq alpha_bk;
+    //Fq a_bk;
+    //Fq alpha_bk;
 };
 
 struct VK_theta {
     VK_X vkx;
     ZZ gbeta;
-    Fq beta;
+    //Fq beta;
 };
 using SK_theta = Fq;
 

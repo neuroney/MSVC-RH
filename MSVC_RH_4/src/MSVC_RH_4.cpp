@@ -112,7 +112,7 @@ void ProbGen(VK_X &vk, Mat<Fq> &sigma, const Env &env, const PK_F &pk, Vec<Fq> X
 
     ZZ_pX b;
     ZZ_pX q, factor;
-    random(q, env.k - 2);        // Random polynomial of degree k-2
+    random(q, env.k - 1);        // Random polynomial of degree k-2
     SetCoeff(q, 0, 0);           // Set constant term of q to 0, so q(0) = 0
     SetCoeff(factor, 0, -alpha); // factor = (x - alpha)
     SetCoeff(factor, 1, 1);
@@ -145,8 +145,8 @@ void ProbGen(VK_X &vk, Mat<Fq> &sigma, const Env &env, const PK_F &pk, Vec<Fq> X
         PowerMod(vk.alpha[i], env.g, rep(alpha_power), env.fq);
     }
 
-    vk.a_bk = a;
-    vk.alpha_bk = alpha;
+    //vk.a_bk = a;
+    //vk.alpha_bk = alpha;
 }
 
 void Compute(Fq &pi_i, int idx, const MultiPoly<Fq> &ek_i, const Vec<Fq> &sigma_i, const Fq &theta_i, const Env &env)
@@ -203,19 +203,21 @@ void MaskGen(VK_theta &vk, SK_theta &sk, Vec<Fq> &theta, const Env &env, const V
 
     theta.SetLength(env.k);
     ZZ_pX z;
-    ZZ_pX q, factor;
-    random(q, env.k - 2);        // Random polynomial of degree k-2
-    SetCoeff(q, 0, 0);           // Set constant term of q to 0, so q(0) = 0
-    SetCoeff(factor, 0, -vk.vkx.alpha_bk); // factor = (x - alpha)
-    SetCoeff(factor, 1, 1);
-    z = factor * q; // temp(x) = (x - alpha) * q(x), so temp(alpha) = 0 and temp(0) = 0
-    z = z + sk; // z(x) = temp(x) + sk, so z(alpha) = sk and z(0) = sk
+    random(z, env.k);        // Random polynomial of degree k-1
+    SetCoeff(z, 0, sk);           // Set constant term of z to beta,
     for (int i = 0; i < env.k; ++i)
     {
         eval(theta[i], z, to_ZZ_p(i));
     }
-
-    vk.beta = sk;
+    PowerMod(vk.gbeta, env.g, rep(sk), env.fq);
+    
+    ZZ tmp;
+    for (int i = 0; i < env.k - 1; ++i)
+    {
+        PowerMod(tmp, vk_x.alpha[i], rep(z[i+1]), env.fq);
+        MulMod(vk.gbeta, vk.gbeta, tmp, env.fq);
+    }
+    //vk.beta = sk;
 }
 
 void Reconstruct(Fq &res, const SK_theta &sk, const Vec<Fq> &pi, const Env &env)
